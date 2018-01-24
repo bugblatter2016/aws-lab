@@ -1,0 +1,5 @@
+#cloud-config
+runcmd:
+ - 'curl -s https://packagecloud.io/install/repositories/grafana/stable/script.deb.sh | sudo bash'
+ - 'apt-get update -y'
+ - 'apt-get install grafana -y'
