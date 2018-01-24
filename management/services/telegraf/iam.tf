@@ -1,7 +1,7 @@
 //module "aws_iam_role" {
 //  source = "../../../modules/local/aws-iam-role"
 //
-//  name = "influxdb"
+//  name = "telegraf"
 //}
 //
 //module "aws_iam_role_policy" {
@@ -15,6 +15,6 @@
 //module "aws_iam_instance_profile" {
 //  source = "../../../modules/local/aws-iam-instance-profile"
 //
-//  name = "influxdb"
+//  name = "telegraf"
 //  role = "${module.aws_iam_role.aws_iam_role_name}"
 //}

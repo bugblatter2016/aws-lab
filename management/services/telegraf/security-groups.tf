@@ -1,8 +1,8 @@
-module "influxdb_security_group" {
+module "telegraf_security_group" {
   source = "../../../modules/local/aws-security-group"
 
-  security_group_name         = "influxdb"
-  security_group_description  = "influxdb"
+  security_group_name         = "telegraf"
+  security_group_description  = "telegraf"
   vpc_id                      = "${data.terraform_remote_state.infrastructure.vpc_id}"
 }
 
@@ -14,7 +14,7 @@ module "security_group_rule_allow_ssh_from_world" {
   to_port           = "22"
   from_port         = "22"
   cidr_blocks       = "0.0.0.0/0"
-  security_group_id = "${module.influxdb_security_group.security_group_id}"
+  security_group_id = "${module.telegraf_security_group.security_group_id}"
 
 }
 
@@ -26,7 +26,7 @@ module "security_group_rule_allow_ssh_from_world" {
 //  to_port           = "3000"
 //  from_port         = "3000"
 //  cidr_blocks       = "0.0.0.0/0"
-//  security_group_id = "${module.influxdb_security_group.security_group_id}"
+//  security_group_id = "${module.telegraf_security_group.security_group_id}"
 //
 //}
 
@@ -38,6 +38,6 @@ module "security_group_rule_allow_outbound_all" {
   to_port           = 0
   from_port         = 0
   cidr_blocks       = "0.0.0.0/0"
-  security_group_id = "${module.influxdb_security_group.security_group_id}"
+  security_group_id = "${module.telegraf_security_group.security_group_id}"
 
 }
