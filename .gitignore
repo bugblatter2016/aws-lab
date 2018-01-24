@@ -1,0 +1,12 @@
+# Compiled files
+*.tfstate
+*.tfstate.backup
+
+# Local vars
+*.tfvars
+
+# Module directory
+.terraform/
+
+# Ideas
+.idea
