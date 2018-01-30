@@ -1,0 +1,96 @@
+{
+  "objects": [
+    {
+      "myComment": "This object is used to set default configuration for objects in the pipeline",
+
+      "id": "Default",
+      "failureAndRerunMode": "CASCADE",
+      "resourceRole": "DataPipelineDefaultResourceRole",
+      "role": "DataPipelineDefaultRole",
+      "pipelineLogUri": "s3://mdm-file-xfr-logging/shell_command_decrypt/",
+      "name": "Default",
+      "scheduleType": "ONDEMAND"
+    },
+    {
+      "myComment": "Pipeline object that represents the S3 bucket node that contains the input encrypted file.",
+
+      "type": "S3DataNode",
+      "id": "S3InputLocation",
+      "directoryPath": "s3://mdm-file-xfr-testing/import/",
+      "name": "s3-import-directory"
+    },
+    {
+      "myComment": "Pipeline object that represents the S3 bucket node that is used as the output directory for the decrypted file.",
+
+      "type": "S3DataNode",
+      "id": "S3OutputLocation",
+      "directoryPath": "s3://mdm-file-xfr-testing/export/",
+      "name": "s3-export-directory"
+    },
+    {
+      "myComment": "Pipeline object that represents the S3 bucket node that is used to hold the keys.",
+
+      "type": "S3DataNode",
+      "id": "S3KeysLocation",
+      "directoryPath": "s3://mdm-file-xfr-testing/keys/",
+      "name": "s3-keys-directory"
+    },
+    {
+      "name": "import-gpg-keyring",
+      "type": "ShellCommandActivity",
+      "id": "ShellCommandActivityObj1",
+      "runsOn": {
+        "ref": "EC2ResourceObj"
+      },
+      "command": "aws s3 cp s3://mdm-file-xfr-testing/keys/private.key /tmp/; gpg --import /tmp/private.key"
+    },
+    {
+      "name": "copy-test",
+      "type": "ShellCommandActivity",
+      "id": "ShellCommandActivityObj2",
+      "stage": "true",
+      "dependsOn": {
+        "ref":"ShellCommandActivityObj1"
+      },
+      "input": {
+        "ref": "S3InputLocation"
+      },
+      "output": {
+        "ref": "S3OutputLocation"
+      },
+      "runsOn": {
+        "ref": "EC2ResourceObj"
+      },
+      "command": "aws s3 cp s3://mdm-file-xfr-testing/import/MOCK_DATA-linux.csv s3://mdm-file-xfr-testing/export/MOCK_DATA-testing.csv;"
+    },
+    {
+    "name": "decrypt-to-staging",
+    "type": "ShellCommandActivity",
+    "id": "ShellCommandActivityObj3",
+    "stage": "true",
+    "dependsOn": {
+      "ref":"ShellCommandActivityObj1"
+    },
+    "input": {
+      "ref": "S3InputLocation"
+    },
+    "output": {
+      "ref": "S3OutputLocation"
+    },
+    "runsOn": {
+      "ref": "EC2ResourceObj"
+    },
+    "command": "aws s3 cp s3://mdm-file-xfr-testing/import/MOCK_DATA-linux.csv.gpg /tmp/; gpg --output /tmp/MOCK_DATA-decrypted.csv --decrypt /tmp/MOCK_DATA-linux.csv.gpg; aws s3 cp /tmp/MOCK_DATA-decrypted.csv s3://mdm-file-xfr-testing/export/MOCK_DATA-decrypted.csv;"
+    },
+    {
+      "myComment": "This object is used to create an Amazon EC2 Instance that activities in the pipeline can run on.",
+
+      "instanceType": "t1.micro",
+      "name": "EC2ResourceObj",
+      "id": "EC2ResourceObj",
+      "type": "Ec2Resource",
+      "imageId": "ami-d834aba1",
+      "terminateAfter": "20 Minutes"
+    }
+  ]
+}

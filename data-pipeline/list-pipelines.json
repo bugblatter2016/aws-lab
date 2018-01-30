@@ -1,0 +1,24 @@
+{
+  "pipelineIdList": [
+    {
+      "name": "test",
+      "id": "df-0985731300JQ4VV7BRWZ"
+    },
+    {
+      "name": "mdm-file-xfr-s3-to-rds",
+      "id": "df-071686633RTJX3UVWF99"
+    },
+    {
+      "name": "template",
+      "id": "df-04724882CHCWZQQT8W8E"
+    },
+    {
+      "name": "mdm-file-xfr-s3-to-s3",
+      "id": "df-016953924IE0FH3I2849"
+    },
+    {
+      "name": "mdm-file-xfr",
+      "id": "df-00149571V6LC96KIT1PZ"
+    }
+  ]
+}

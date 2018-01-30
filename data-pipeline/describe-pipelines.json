@@ -1,0 +1,47 @@
+{
+  "pipelineDescriptionList": [
+    {
+      "tags": [],
+      "name": "template",
+      "fields": [
+        {
+          "key": "pipelineCreator",
+          "stringValue": "AIDAIAYUUDQUCVCBYVMJQ"
+        },
+        {
+          "key": "@creationTime",
+          "stringValue": "2018-01-29T16:41:45"
+        },
+        {
+          "key": "name",
+          "stringValue": "template"
+        },
+        {
+          "key": "@sphere",
+          "stringValue": "PIPELINE"
+        },
+        {
+          "key": "@id",
+          "stringValue": "df-04724882CHCWZQQT8W8E"
+        },
+        {
+          "key": "@pipelineState",
+          "stringValue": "PENDING"
+        },
+        {
+          "key": "@accountId",
+          "stringValue": "484799484100"
+        },
+        {
+          "key": "uniqueId",
+          "stringValue": "C648095D-4DE0-4CBF-92CB-C34C7D683808"
+        },
+        {
+          "key": "@userId",
+          "stringValue": "AIDAIAYUUDQUCVCBYVMJQ"
+        }
+      ],
+      "pipelineId": "df-04724882CHCWZQQT8W8E"
+    }
+  ]
+}

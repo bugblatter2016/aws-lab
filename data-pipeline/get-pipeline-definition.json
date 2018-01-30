@@ -1,0 +1,146 @@
+{
+  "values": {
+    "*myRDSPassword": "blah123",
+    "myRDSTableName": "test",
+    "myRDSUsername": "danny",
+    "myInputS3Loc": "s3://mdm-file-xfr-testing/import/MOCK_DATA.csv",
+    "myRDSTableInsertSql": "INSERT INTO #{table} (col1, col2, col3) VALUES(?, ?, ?) ;",
+    "myRDSInstanceId": "test"
+  },
+  "objects": [
+    {
+      "name": "RdsMySqlTableCreateActivity",
+      "script": "#{myRDSCreateTableSql}",
+      "id": "RdsMySqlTableCreateActivity",
+      "runsOn": {
+        "ref": "Ec2Instance"
+      },
+      "database": {
+        "ref": "rds_mysql"
+      },
+      "type": "SqlActivity"
+    },
+    {
+      "output": {
+        "ref": "DestinationRDSTable"
+      },
+      "name": "DataLoadActivity",
+      "dependsOn": {
+        "ref": "RdsMySqlTableCreateActivity"
+      },
+      "type": "CopyActivity",
+      "runsOn": {
+        "ref": "Ec2Instance"
+      },
+      "input": {
+        "ref": "S3InputDataLocation"
+      },
+      "id": "DataLoadActivity"
+    },
+    {
+      "type": "CSV",
+      "name": "DataFormat1",
+      "id": "DataFormat1"
+    },
+    {
+      "resourceRole": "DataPipelineDefaultResourceRole",
+      "scheduleType": "ONDEMAND",
+      "role": "DataPipelineDefaultRole",
+      "name": "Default",
+      "failureAndRerunMode": "CASCADE",
+      "pipelineLogUri": "s3://mdm-file-xfr-logging/",
+      "id": "Default"
+    },
+    {
+      "terminateAfter": "2 hours",
+      "name": "Ec2Instance",
+      "securityGroups": "#{myEc2RdsSecurityGrps}",
+      "instanceType": "t1.micro",
+      "type": "Ec2Resource",
+      "actionOnTaskFailure": "terminate",
+      "id": "Ec2Instance"
+    },
+    {
+      "id": "rds_mysql",
+      "rdsInstanceId": "#{myRDSInstanceId}",
+      "name": "rds_mysql",
+      "username": "#{myRDSUsername}",
+      "jdbcProperties": "allowMultiQueries=true",
+      "*password": "#{*myRDSPassword}",
+      "type": "RdsDatabase"
+    },
+    {
+      "directoryPath": "#{myInputS3Loc}",
+      "type": "S3DataNode",
+      "dataFormat": {
+        "ref": "DataFormat1"
+      },
+      "name": "S3InputDataLocation",
+      "id": "S3InputDataLocation"
+    },
+    {
+      "table": "#{myRDSTableName}",
+      "name": "DestinationRDSTable",
+      "selectQuery": "select * from #{table}",
+      "id": "DestinationRDSTable",
+      "database": {
+        "ref": "rds_mysql"
+      },
+      "insertQuery": "#{myRDSTableInsertSql}",
+      "type": "SqlDataNode"
+    }
+  ],
+  "parameters": [
+    {
+      "type": "String",
+      "description": "RDS MySQL password",
+      "id": "*myRDSPassword"
+    },
+    {
+      "helpText": "The names of one or more EC2 security groups that have access to the RDS MySQL cluster.",
+      "isArray": "true",
+      "description": "RDS MySQL security group(s)",
+      "type": "String",
+      "watermark": "security group name",
+      "optional": "true",
+      "id": "myEc2RdsSecurityGrps"
+    },
+    {
+      "type": "AWS::S3::ObjectKey",
+      "description": "Input S3 file path",
+      "id": "myInputS3Loc"
+    },
+    {
+      "type": "String",
+      "description": "RDS MySQL username",
+      "id": "myRDSUsername"
+    },
+    {
+      "helpText": "The SQL statement to insert data into the RDS MySQL table.",
+      "type": "String",
+      "watermark": "INSERT INTO #{table} (col1, col2, col3) VALUES(?, ?, ?) ;",
+      "description": "Insert SQL query",
+      "id": "myRDSTableInsertSql"
+    },
+    {
+      "helpText": "The name of an existing table or a new table that will be created based on the create table SQL query parameter below.",
+      "type": "String",
+      "description": "RDS MySQL table name",
+      "id": "myRDSTableName"
+    },
+    {
+      "type": "String",
+      "watermark": "DB Instance",
+      "description": "RDS Instance ID",
+      "id": "myRDSInstanceId"
+    },
+    {
+      "helpText": "The idempotent SQL statement to create the RDS MySQL table if it does not already exist.",
+      "description": "Create table SQL query",
+      "type": "String",
+      "watermark": "CREATE TABLE pet IF NOT EXISTS (name VARCHAR(20), owner VARCHAR(20), species VARCHAR(20), gender CHAR(1), birth DATE, death DATE);",
+      "id": "myRDSCreateTableSql",
+      "optional": "true"
+    }
+  ]
+}

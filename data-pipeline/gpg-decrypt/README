@@ -1,0 +1,4 @@
+aws datapipeline create-pipeline --name shell_command_decrypt --unique-id shell_command_decrypt
+aws datapipeline put-pipeline-definition --pipeline-definition file://pipeline.json --parameter-values myS3InputLoc=<s3://your/s3/input/staging/path> myS3OutputLoc=<s3://your/s3/output/staging/path> myS3LogsPath=<s3://your/s3/logs/path> myFTPUser=<user> myFTPHost=<host> --pipeline-id <Your Pipeline ID>
+aws datapipeline activate-pipeline --pipeline-id <Your Pipeline ID>
+aws datapipeline list-runs --pipeline-id <Your Pipeline ID>
